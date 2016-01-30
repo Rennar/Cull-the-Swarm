@@ -13,10 +13,16 @@ public class Player : MonoBehaviour {
     float precisionSpeed = 5f;
     float shipTilt = 0f;
 
+	public Transform gunR;
+	public Transform gunL;
+	float shootCool;
+	float shootTimer;
+	public GameObject bullet;
+
     // Use this for initialization
     void Start()
     {
-
+		shootCool = .2f;
     }
 
     // Update is called once per frame
@@ -33,6 +39,10 @@ public class Player : MonoBehaviour {
             hSpeed *= 0.7f;
             vSpeed *= 0.7f;
         }
+
+		if (Input.GetButtonDown ("Primary")) {
+			StartCoroutine ("Firing");
+		}
 
         // Adjust for precision mode.
         if (Input.GetButton("Precision"))
@@ -61,4 +71,17 @@ public class Player : MonoBehaviour {
     {
         GetComponent<AudioSource>().Play();
     }
+
+	void Shoot(){
+		Instantiate (bullet, gunL.position, Quaternion.identity);
+		Instantiate (bullet, gunR.position, Quaternion.identity);
+	}
+
+	IEnumerator Firing(){
+		while(Input.GetButton("Primary")){
+			Shoot();
+			yield return new WaitForSeconds(shootCool);
+		}
+		yield break;
+	}
 }
